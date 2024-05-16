@@ -1,0 +1,6 @@
+item:
+  material: book
+  name: '&9Sell Chest Talisman'
+  lore:
+    - '&c{uses} uses remaining'
+    - '&cMultiplier: {multiplier}'

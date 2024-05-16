@@ -1,0 +1,11 @@
+name: SellChests
+main: com.jordna.main.SellChests
+version: 0.0.1
+author: Jordna
+description: SellChests plugin
+
+depend: [Essentials, Vault]
+commands:
+  scgive:
+    description: Give a Sell Chest item
+    usage: scgive [player name] [uses] [multiplier]
