@@ -1,6 +1,7 @@
 package com.jordna.managers;
 
 import com.jordna.main.SellChests;
+import com.jordna.messages.Severity;
 import org.bukkit.*;
 
 import java.util.ArrayList;
@@ -22,6 +23,10 @@ public class SellChestConfigManager
     {
         instance.saveDefaultConfig();
 
+        instance.getConfig().addDefault("messages.format.info", "&b&l[INFO] &r&7{message}");
+        instance.getConfig().addDefault("messages.format.debug", "&5&l[DEBUG] &r&7{message}");
+        instance.getConfig().addDefault("messages.format.error", "&c&l[ERROR] &r&c{message}");
+
         instance.getConfig().addDefault("item.material", "book");
         instance.getConfig().addDefault("item.name", "&9Sell Chest Talisman");
         List<String> lore = new ArrayList<>();
@@ -33,15 +38,27 @@ public class SellChestConfigManager
         instance.saveConfig();
     }
 
+    public String getMessageFormat(Severity severity)
+    {
+        return instance.getConfig().getString("messages.format." + severity.name);
+    }
+
     public Material getItem()
     {
         String itemName = instance.getConfig().getString("item.material");
         if (itemName == null)
         {
-            System.out.println("ERROR: item.material is not defined in the config");
+            instance.getMessageSender().sendMessage(Severity.ERROR, "item.material is not defined in the config");
             return Material.BOOK;
         }
-        return Material.getMaterial(itemName.toUpperCase());
+
+        Material itemMaterial = Material.matchMaterial(itemName.toUpperCase());
+        if (itemMaterial == null)
+        {
+            instance.getMessageSender().sendMessage(Severity.ERROR, "item.material value could not be mapped to a material: " + itemName);
+            return Material.BOOK;
+        }
+        return itemMaterial;
     }
 
     public String getDisplayName()
@@ -49,7 +66,8 @@ public class SellChestConfigManager
         String displayName = instance.getConfig().getString("item.name");
         if (displayName == null)
         {
-            System.out.println("ERROR: item.displayName is not defined in the config");
+            instance.getMessageSender().sendMessage(Severity.ERROR, "item.displayName is not defined in the config");
+            return "Sell Chest Item";
         }
         return ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(displayName));
     }
@@ -58,7 +76,8 @@ public class SellChestConfigManager
     {
         if (instance.getConfig().getString("item.lore") == null)
         {
-            System.out.println("ERROR: item.lore is not defined in the config");
+            instance.getMessageSender().sendMessage(Severity.ERROR, "item.lore is not defined in the config");
+            return new ArrayList<>();
         }
         List<String> colouredLore = new ArrayList<>();
         for (String s : instance.getConfig().getStringList("item.lore"))

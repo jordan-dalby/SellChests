@@ -40,43 +40,49 @@ public class ChestEvents implements Listener
                 InventoryAction.SWAP_WITH_CURSOR
         ));
 
+        if (event.getClickedInventory() == null)
+            return;
+
+        boolean sellChestContents = false;
+        if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY)
+        {
+            if (Objects.requireNonNull(event.getInventory()).getType() == InventoryType.CHEST)
+            {
+                if (instance.getSellChestItemManager().getItemStackIsSellChestItem(Objects.requireNonNull(event.getCurrentItem())))
+                {
+                    if (event.getWhoClicked() instanceof Player player)
+                    {
+                        SellChestItem sellChestItem = new SellChestItem(instance, event.getCurrentItem());
+                        sellChestItem.setOwner(player.getUniqueId());
+                    }
+                }
+                sellChestContents = true;
+            }
+        }
+        else if (addActions.contains(event.getAction()))
+        {
+            if (Objects.requireNonNull(event.getClickedInventory()).getType() == InventoryType.CHEST)
+            {
+                if (instance.getSellChestItemManager().getItemStackIsSellChestItem(Objects.requireNonNull(event.getCursor())))
+                {
+                    if (event.getWhoClicked() instanceof Player player)
+                    {
+                        SellChestItem sellChestItem = new SellChestItem(instance, event.getCursor());
+                        sellChestItem.setOwner(player.getUniqueId());
+                    }
+                }
+                sellChestContents = true;
+            }
+        }
+
+        boolean finalSellChestContents = sellChestContents;
         new BukkitRunnable()
         {
             @Override
             public void run()
             {
-                if (event.getClickedInventory() == null)
-                    return;
-
-                SellChestItem sellChestItem = new SellChestItem(instance, event.getCurrentItem());
-                if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY)
-                {
-                    if (Objects.requireNonNull(event.getInventory()).getType() == InventoryType.CHEST)
-                    {
-                        if (instance.getSellChestItemManager().getItemStackIsSellChestItem(Objects.requireNonNull(event.getCurrentItem())))
-                        {
-                            if (event.getWhoClicked() instanceof Player player)
-                            {
-                                sellChestItem.setOwner(player.getUniqueId());
-                            }
-                        }
-                        instance.getSellChestManager().sellChestContents(event.getInventory());
-                    }
-                }
-                else if (addActions.contains(event.getAction()))
-                {
-                    if (Objects.requireNonNull(event.getClickedInventory()).getType() == InventoryType.CHEST)
-                    {
-                        if (instance.getSellChestItemManager().getItemStackIsSellChestItem(Objects.requireNonNull(event.getCurrentItem())))
-                        {
-                            if (event.getWhoClicked() instanceof Player player)
-                            {
-                                sellChestItem.setOwner(player.getUniqueId());
-                            }
-                        }
-                        instance.getSellChestManager().sellChestContents(event.getInventory());
-                    }
-                }
+                if (finalSellChestContents)
+                    instance.getSellChestManager().sellChestContents(event.getInventory());
             }
         }.runTaskLater(instance, 2);
     }

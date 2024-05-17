@@ -1,6 +1,11 @@
+messages:
+  format:
+    info: '&b&l[INFO] &r&7{message}'
+    debug: '&5&l[DEBUG] &r&7{message}'
+    error: '&c&l[ERROR] &r&c{message}'
 item:
   material: book
-  name: '&9Sell Chest Talisman'
+  name: '&9&lSell Chest Talisman'
   lore:
-    - '&c{uses} uses remaining'
-    - '&cMultiplier: {multiplier}'
+    - '&b{uses} &r&cuses remaining'
+    - '&cMultiplier: &b{multiplier}'

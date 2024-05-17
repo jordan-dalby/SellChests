@@ -3,6 +3,7 @@ main: com.jordna.main.SellChests
 version: 0.0.1
 author: Jordna
 description: SellChests plugin
+api-version: '1.20'
 
 depend: [Essentials, Vault]
 commands:

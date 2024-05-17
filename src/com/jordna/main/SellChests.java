@@ -6,6 +6,8 @@ import com.jordna.listeners.ChestEvents;
 import com.jordna.managers.SellChestConfigManager;
 import com.jordna.managers.SellChestItemManager;
 import com.jordna.managers.SellChestManager;
+import com.jordna.messages.MessageSender;
+import com.jordna.messages.Severity;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -19,6 +21,7 @@ public class SellChests extends JavaPlugin
     private Economy economy;
 
     private SellChestManager sellChestManager;
+    private MessageSender messageSender;
     private SellChestConfigManager sellChestConfigManager;
     private SellChestItemManager sellChestItemManager;
 
@@ -31,6 +34,7 @@ public class SellChests extends JavaPlugin
     public void onEnable()
     {
         sellChestConfigManager = new SellChestConfigManager(this);
+        messageSender = new MessageSender(this);
         sellChestItemManager = new SellChestItemManager(this);
         sellChestManager = new SellChestManager(this);
 
@@ -39,18 +43,19 @@ public class SellChests extends JavaPlugin
 
         if (!loadEssentials() || !loadVault())
         {
-            System.out.println("Some dependencies were not found or failed to load! Disabling SellChests.");
+            messageSender.sendMessage(Severity.ERROR, "Some dependencies were not found or failed to load! Disabling SellChests.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        System.out.println("SellChests successfully loaded.");
+        messageSender.sendMessage(Severity.INFO, "SellChests successfully loaded.");
     }
 
     private boolean loadEssentials()
     {
-        if (!getServer().getPluginManager().isPluginEnabled("Essentials")) {
-            System.out.println("EssentialsX plugin not found!");
+        if (!getServer().getPluginManager().isPluginEnabled("Essentials"))
+        {
+            messageSender.sendMessage(Severity.ERROR, "EssentialsX not found.");
             return false;
         }
 
@@ -60,14 +65,16 @@ public class SellChests extends JavaPlugin
 
     private boolean loadVault()
     {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            System.out.println("Vault plugin not found!");
+        if (getServer().getPluginManager().getPlugin("Vault") == null)
+        {
+            messageSender.sendMessage(Severity.ERROR, "Vault not found.");
             return false;
         }
 
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            System.out.println("No response from economy, Vault integration failed!");
+        if (rsp == null)
+        {
+            messageSender.sendMessage(Severity.ERROR, "No response from economy, Vault integration failed!");
             return false;
         }
         economy = rsp.getProvider();
@@ -92,6 +99,11 @@ public class SellChests extends JavaPlugin
     public SellChestConfigManager getSellChestConfigManager()
     {
         return sellChestConfigManager;
+    }
+
+    public MessageSender getMessageSender()
+    {
+        return messageSender;
     }
 
     public SellChestItemManager getSellChestItemManager()

@@ -26,8 +26,11 @@ public class SellChestItem
 
     public int getRemainingUses()
     {
+        if (stack == null)
+            return 0;
+
         if (!stack.hasItemMeta())
-            return -1;
+            return 0;
 
         ItemMeta meta = stack.getItemMeta();
         PersistentDataContainer container = Objects.requireNonNull(meta).getPersistentDataContainer();
@@ -42,6 +45,8 @@ public class SellChestItem
 
     public void setRemainingUses(int value)
     {
+        if (stack == null)
+            return;
         if (!stack.hasItemMeta())
             return;
 
@@ -64,8 +69,10 @@ public class SellChestItem
 
     public int getMultiplier()
     {
+        if (stack == null)
+            return 0;
         if (!stack.hasItemMeta())
-            return -1;
+            return 0;
 
         ItemMeta meta = stack.getItemMeta();
         PersistentDataContainer container = Objects.requireNonNull(meta).getPersistentDataContainer();
@@ -80,6 +87,8 @@ public class SellChestItem
 
     public UUID getOwner()
     {
+        if (stack == null)
+            return null;
         if (!stack.hasItemMeta())
             return null;
 
@@ -96,6 +105,8 @@ public class SellChestItem
 
     public void setOwner(UUID uuid)
     {
+        if (stack == null)
+            return;
         if (!stack.hasItemMeta())
             return;
 
@@ -108,6 +119,8 @@ public class SellChestItem
 
     public OfflinePlayer getPlayerOwner()
     {
+        if (getOwner() == null)
+            return null;
         return Bukkit.getOfflinePlayer(getOwner());
     }
 

@@ -1,8 +1,8 @@
 package com.jordna.commands;
 
 import com.jordna.main.SellChests;
+import com.jordna.messages.Severity;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -30,7 +30,7 @@ public class GiveSellChestItemCommand implements CommandExecutor
             {
                 if (!player.hasPermission("sellchests.give"))
                 {
-                    sendMessage(sender, ChatColor.RED + "You don't have permission to use this command!");
+                    instance.getMessageSender().sendMessage(player, Severity.ERROR, "You don't have permission to use this command!");
                     return true;
                 }
             }
@@ -39,7 +39,7 @@ public class GiveSellChestItemCommand implements CommandExecutor
                 Player player = Bukkit.getPlayer(args[0]);
                 if (player == null)
                 {
-                    sendMessage(sender, ChatColor.RED + "Couldn't find player " + args[0]);
+                    instance.getMessageSender().sendMessage(sender, Severity.ERROR, "Couldn't find player " + args[0]);
                     return true;
                 }
 
@@ -48,28 +48,20 @@ public class GiveSellChestItemCommand implements CommandExecutor
                     int uses = Integer.parseInt(args[1]);
                     int multiplier = Integer.parseInt(args[2]);
                     player.getInventory().addItem(instance.getSellChestItemManager().getSellChestItem(uses, multiplier));
-                    sendMessage(sender, ChatColor.BLUE + "Item given");
+                    instance.getMessageSender().sendMessage(sender, Severity.INFO, "Item given");
                 }
                 catch (NumberFormatException e)
                 {
-                    sendMessage(sender, ChatColor.RED + "Invalid number passed as uses or multiplier value");
+                    instance.getMessageSender().sendMessage(sender, Severity.ERROR, "Invalid number passed as uses or multiplier value");
                     return true;
                 }
             }
             else
             {
-                sendMessage(sender, ChatColor.RED + "Invalid command format, /scgive [player name] [uses] [multiplier]");
+                instance.getMessageSender().sendMessage(sender, Severity.ERROR, "Invalid command format, /scgive [player name] [uses] [multiplier]");
                 return true;
             }
         }
         return true;
-    }
-
-    private void sendMessage(CommandSender sender, String message)
-    {
-        if (sender instanceof Player player)
-            player.sendMessage(message);
-        else
-            System.out.println(message);
     }
 }

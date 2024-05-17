@@ -2,6 +2,7 @@ package com.jordna.managers;
 
 import com.jordna.main.SellChests;
 import com.jordna.types.SellChestItem;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -23,7 +24,10 @@ public class SellChestItemManager
 
     public ItemStack getSellChestItem(int itemUses, int itemMultiplier)
     {
-        ItemStack sellChestItem = new ItemStack(instance.getSellChestConfigManager().getItem(), 1);
+        Material selected = instance.getSellChestConfigManager().getItem();
+        Material material = selected == null ? Material.BOOK : selected;
+
+        ItemStack sellChestItem = new ItemStack(material, 1);
         ItemMeta meta = sellChestItem.getItemMeta();
         if (meta != null)
         {
@@ -46,6 +50,8 @@ public class SellChestItemManager
 
     public boolean getItemStackIsSellChestItem(ItemStack stack)
     {
+        if (stack == null)
+            return false;
         if (!stack.hasItemMeta())
             return false;
 

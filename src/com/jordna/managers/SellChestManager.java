@@ -1,14 +1,12 @@
 package com.jordna.managers;
 
 import com.jordna.main.SellChests;
+import com.jordna.messages.Severity;
 import com.jordna.types.SellChestItem;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import javax.swing.text.NumberFormatter;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.HashMap;
@@ -28,6 +26,8 @@ public class SellChestManager
 
     public void sellChestContents(Inventory inventory)
     {
+        if (inventory == null)
+            return;
         if (inventory.firstEmpty() != -1)
             return;
 
@@ -84,7 +84,7 @@ public class SellChestManager
         {
             if (sellChestItem.getPlayerOwner().isOnline())
             {
-                ((Player)sellChestItem.getPlayerOwner()).sendMessage(ChatColor.BLUE + "Your chest was full and auto-sold for " + formatter.format(total));
+                instance.getMessageSender().sendMessage(sellChestItem.getPlayerOwner(), Severity.INFO, "Your chest was full and auto-sold for " + formatter.format(total));
             }
         }
     }
